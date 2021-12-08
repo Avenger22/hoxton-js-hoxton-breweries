@@ -3,13 +3,13 @@ const formHeaderEl = document.querySelector('form#select-state-form')
 const mainContentEl = document.querySelector('main.main-content')
 
 
-//-------------------------STATE OBJECT--------------------------------------
+//-----------------------------------STATE OBJECT--------------------------------------
 
 const state = {
     breweries: []
 }
 
-//--------------------------END OF STATE OBJECT--------------------------------
+//--------------------------------END OF STATE OBJECT--------------------------------
 
 
 //--------------------------SERVER FUNCTIONS-------------------------------------
@@ -113,7 +113,7 @@ function renderFilterSection(breweriesArrayParam) {
 
     const btnDivEl = document.createElement('button')
     btnDivEl.setAttribute('class', 'clear-all-btn')
-    btnDivEl.textContent = 'clear all'
+    btnDivEl.textContent = 'Clear All'
 
     //appending to div
     divEl.append(h3DivEl, btnDivEl)
@@ -122,26 +122,31 @@ function renderFilterSection(breweriesArrayParam) {
     const formEl2 = document.createElement('form')
     formEl2.setAttribute('id', 'filter-by-city-form')
 
-    const inputEl1 = document.createElement('input')
-    inputEl1.setAttribute('type', 'checkbox')
-    inputEl1.setAttribute('name', 'chardon')
-    inputEl1.setAttribute('value', 'chardon')
+    formEl2.innerHTML = ''
 
-    const labelEl2 = document.createElement('label')
-    labelEl2.setAttribute('for', 'chardon')
-    labelEl2.textContent = 'Chardon'
+    for (const brewery of breweriesArrayParam) {
 
-    const inputEl2 = document.createElement('input')
-    inputEl2.setAttribute('type', 'checkbox')
-    inputEl2.setAttribute('name', 'cincinnati')
-    inputEl2.setAttribute('value', 'cincinnati')
+        const inputEl = document.createElement('input')
+        inputEl.setAttribute('type', 'checkbox')
+        inputEl.setAttribute('name', brewery.city)
+        inputEl.setAttribute('value', brewery.city)
 
-    const labelEl3 = document.createElement('label')
-    labelEl3.setAttribute('for', 'cincinnati')
-    labelEl3.textContent = 'Cincinnati'
+        const labelEl = document.createElement('label')
+        labelEl.setAttribute('for', brewery.city)
+        labelEl.textContent = brewery.city
 
-    //appending elements to their parent form
-    formEl2.append(inputEl1, labelEl2, inputEl2, labelEl3)
+        // const inputEl2 = document.createElement('input')
+        // inputEl2.setAttribute('type', 'checkbox')
+        // inputEl2.setAttribute('name', 'cincinnati')
+        // inputEl2.setAttribute('value', 'cincinnati')
+
+        // const labelEl3 = document.createElement('label')
+        // labelEl3.setAttribute('for', 'cincinnati')
+        // labelEl3.textContent = 'Cincinnati'
+
+        //appending elements to their parent form
+        formEl2.append(inputEl, labelEl)
+    }
 
     //append everything to the aside element
     asideEl.append(h2El, formEl1, divEl, formEl2)
@@ -288,4 +293,5 @@ function init() {
 //--------------------------END OF RENDER FUNCTIONS-------------------------------
 
 
+//--------------------------------APP START------------------------------------------
 init()
