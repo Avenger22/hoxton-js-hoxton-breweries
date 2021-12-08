@@ -157,61 +157,68 @@ function renderListSection(breweriesArrayParam) {
     //creating the UL inside ARTICLE
     const ulArticleEl = document.createElement('ul')
     ulArticleEl.setAttribute('class', 'breweries-list')
+    
+    //destroy then recreate each time i rerender the ul with li in a for of loop
+    ulArticleEl.innerHTML = ''
 
-    //CREATING THE LI INSIDE UL
-    const liArticleEl = document.createElement('li')
+    for (const breweryObject of breweriesArrayParam) {
 
-    const h2ArticleEl = document.createElement('h2')
-    h2ArticleEl.textContent = 'Snow Belt Brew'
+        //CREATING THE LI INSIDE UL
+        const liArticleEl = document.createElement('li')
 
-    const divArticleEl = document.createElement('div')
-    divArticleEl.setAttribute('class', 'type')
-    divArticleEl.textContent = 'micro'
+        const h2ArticleEl = document.createElement('h2')
+        h2ArticleEl.textContent = breweryObject.name
 
-
-    const sectionArticleEl1 = document.createElement('section')
-    sectionArticleEl1.setAttribute('class', 'address')
-
-    const h3SectionEl1 = document.createElement('h3')
-    h3SectionEl1.textContent = 'Address'
-
-    const pSectionEl1 = document.createElement('p')
-    pSectionEl1.textContent = '9511 Kile Rd'
-
-    const pSectionEl2 = document.createElement('p')
-
-    const strongSectionEl = document.createElement('strong')
-    strongSectionEl.textContent = 'Chardon, 44024'
-
-    pSectionEl2.append(strongSectionEl)
-    sectionArticleEl1.append(h3SectionEl1, pSectionEl1, pSectionEl2)
+        const divArticleEl = document.createElement('div')
+        divArticleEl.setAttribute('class', 'type')
+        divArticleEl.textContent = breweryObject.brewery_type
 
 
-    const sectionArticleEl2 = document.createElement('section')
-    sectionArticleEl2.setAttribute('class', 'phone')
+        const sectionArticleEl1 = document.createElement('section')
+        sectionArticleEl1.setAttribute('class', 'address')
 
-    const h3SectionEl2 = document.createElement('h3')
-    h3SectionEl2.textContent = 'Phone'
+        const h3SectionEl1 = document.createElement('h3')
+        h3SectionEl1.textContent = 'Address'
 
-    const pSectionEl3 = document.createElement('p')
-    pSectionEl3.textContent = 'N/A'
+        const pSectionEl1 = document.createElement('p')
+        pSectionEl1.textContent = breweryObject.address_2
 
-    sectionArticleEl2.append(h3SectionEl2, pSectionEl3)
+        const pSectionEl2 = document.createElement('p')
+
+        const strongSectionEl = document.createElement('strong')
+        strongSectionEl.textContent = breweryObject.address_3
+
+        pSectionEl2.append(strongSectionEl)
+        sectionArticleEl1.append(h3SectionEl1, pSectionEl1, pSectionEl2)
 
 
-    const sectionArticleEl3 = document.createElement('section')
-    sectionArticleEl3.setAttribute('class', 'link')
+        const sectionArticleEl2 = document.createElement('section')
+        sectionArticleEl2.setAttribute('class', 'phone')
 
-    const aSectionEl = document.createElement('a')
-    aSectionEl.setAttribute('href', 'null')
-    aSectionEl.setAttribute('target', '_blank')
-    aSectionEl.textContent = 'Visit Website'
+        const h3SectionEl2 = document.createElement('h3')
+        h3SectionEl2.textContent = breweryObject.phone
 
-    sectionArticleEl3.append(aSectionEl)
+        const pSectionEl3 = document.createElement('p')
+        pSectionEl3.textContent = breweryObject.postal_code
 
-    //append all to the li
-    liArticleEl.append(h2ArticleEl, divArticleEl, sectionArticleEl1, sectionArticleEl2, sectionArticleEl3)
-    ulArticleEl.append(liArticleEl)
+        sectionArticleEl2.append(h3SectionEl2, pSectionEl3)
+
+
+        const sectionArticleEl3 = document.createElement('section')
+        sectionArticleEl3.setAttribute('class', 'link')
+
+        const aSectionEl = document.createElement('a')
+        aSectionEl.setAttribute('href', `${breweryObject.website_url}`)
+        aSectionEl.setAttribute('target', '_blank')
+        aSectionEl.textContent = 'Visit Website'
+
+        sectionArticleEl3.append(aSectionEl)
+
+        //append all to the li
+        liArticleEl.append(h2ArticleEl, divArticleEl, sectionArticleEl1, sectionArticleEl2, sectionArticleEl3)
+        ulArticleEl.append(liArticleEl)
+    }
+
     articleEl.append(ulArticleEl)
 
     //append everything to the main
@@ -219,18 +226,30 @@ function renderListSection(breweriesArrayParam) {
 
 }
 
-function render() {
-    renderFilterSection(state.breweries)
-    renderListSection(state.breweries)
+function renderMain(breweriesArrayParam) {
+
+     //we destroy everything then recreate each time it renders the page and state changes
+     mainContentEl.innerHTML = ''
+
+     //recreate using the array to create individual render each post basech on each object inside the array
+ 
+    renderFilterSection(breweriesArrayParam)
+    renderListSection(breweriesArrayParam)
+     
 }
 
-//--------------------------END OF RENDER FUNCTIONS-------------------------------
-
+function render() {
+    renderMain(state.breweries)
+}
 
 //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
 getBreweriesDataFromServer().then(function (breweriesArrayFromServer) {
     state.breweries = breweriesArrayFromServer
-    // render()
-})
+    render()
+ })
+
+
+//--------------------------END OF RENDER FUNCTIONS-------------------------------
+
 
 render()
