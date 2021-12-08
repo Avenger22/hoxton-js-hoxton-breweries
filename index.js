@@ -6,7 +6,7 @@ const mainContentEl = document.querySelector('main.main-content')
 //-------------------------STATE OBJECT--------------------------------------
 
 const state = {
-
+    breweries: []
 }
 
 //--------------------------END OF STATE OBJECT--------------------------------
@@ -14,6 +14,14 @@ const state = {
 
 //--------------------------SERVER FUNCTIONS-------------------------------------
 
+function getBreweriesDataFromServer() {
+
+    return fetch('https://api.openbrewerydb.org/breweries').then(function (response) 
+    {
+        return response.json()
+    })
+
+}
 
 //--------------------------END OF SERVER FUNCTIONS-------------------------------
 
@@ -26,7 +34,7 @@ const state = {
 
 //--------------------------RENDER FUNCTIONS-------------------------------------
 
-function renderFilterSection() {
+function renderFilterSection(breweriesArrayParam) {
 
     const asideEl = document.createElement('aside')
     asideEl.setAttribute('class', 'filters-section')
@@ -114,7 +122,7 @@ function renderFilterSection() {
 
 }
 
-function renderListSection() {
+function renderListSection(breweriesArrayParam) {
 
     const h1El = document.createElement('h1')
     h1El.textContent = 'List of Breweries'
@@ -211,5 +219,18 @@ function renderListSection() {
 
 }
 
+function render() {
+    renderFilterSection(state.breweries)
+    renderListSection(state.breweries)
+}
 
 //--------------------------END OF RENDER FUNCTIONS-------------------------------
+
+
+//FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+getBreweriesDataFromServer().then(function (breweriesArrayFromServer) {
+    state.breweries = breweriesArrayFromServer
+    // render()
+})
+
+render()
