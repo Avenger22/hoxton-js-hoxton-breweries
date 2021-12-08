@@ -181,12 +181,12 @@ function renderListSection(breweriesArrayParam) {
         h3SectionEl1.textContent = 'Address'
 
         const pSectionEl1 = document.createElement('p')
-        pSectionEl1.textContent = breweryObject.address_2
+        pSectionEl1.textContent = `${breweryObject.street}`
 
         const pSectionEl2 = document.createElement('p')
 
         const strongSectionEl = document.createElement('strong')
-        strongSectionEl.textContent = breweryObject.address_3
+        strongSectionEl.textContent = `${breweryObject.city}, ${breweryObject.postal_code}`
 
         pSectionEl2.append(strongSectionEl)
         sectionArticleEl1.append(h3SectionEl1, pSectionEl1, pSectionEl2)
@@ -196,10 +196,10 @@ function renderListSection(breweriesArrayParam) {
         sectionArticleEl2.setAttribute('class', 'phone')
 
         const h3SectionEl2 = document.createElement('h3')
-        h3SectionEl2.textContent = breweryObject.phone
+        h3SectionEl2.textContent = 'Phone:'
 
         const pSectionEl3 = document.createElement('p')
-        pSectionEl3.textContent = breweryObject.postal_code
+        pSectionEl3.textContent = breweryObject.phone
 
         sectionArticleEl2.append(h3SectionEl2, pSectionEl3)
 
