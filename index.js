@@ -43,6 +43,16 @@ function getBreweriesByNameDataFromServer(formInputNameParam) {
 
 }
 
+function getBreweriesByTypeDataFromServer(formInputTypeParam) {
+
+    return fetch(`https://api.openbrewerydb.org/breweries?page=5&by_type=${formInputTypeParam}`)        
+        .then(function (response) 
+        {
+            return response.json()
+        })
+
+}
+
 //--------------------------END OF SERVER FUNCTIONS-------------------------------
 
 
@@ -114,6 +124,22 @@ function renderFilterSection(breweriesArrayParam) {
     selectEl.append(optionEl1, optionEl2, optionEl3, optionEl4)
     formEl1.append(labelEl1, selectEl)
 
+    //event listener to the select option
+    selectEl.addEventListener('change', function(event) {
+
+        event.preventDefault()
+
+        // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+        getBreweriesByTypeDataFromServer(selectEl.options[selectEl.selectedIndex].text)
+            .then(function (breweriesArrayFromServer) {
+                state.breweries = breweriesArrayFromServer
+                formEl1.reset()
+                render()
+            })
+
+
+    }, false);
+
     
     const divEl = document.createElement('div')
     divEl.setAttribute('class', 'filter-by-city-heading')
@@ -145,17 +171,9 @@ function renderFilterSection(breweriesArrayParam) {
         labelEl.setAttribute('for', brewery.city)
         labelEl.textContent = brewery.city
 
-        // const inputEl2 = document.createElement('input')
-        // inputEl2.setAttribute('type', 'checkbox')
-        // inputEl2.setAttribute('name', 'cincinnati')
-        // inputEl2.setAttribute('value', 'cincinnati')
-
-        // const labelEl3 = document.createElement('label')
-        // labelEl3.setAttribute('for', 'cincinnati')
-        // labelEl3.textContent = 'Cincinnati'
-
         //appending elements to their parent form
         formEl2.append(inputEl, labelEl)
+
     }
 
     //append everything to the aside element
