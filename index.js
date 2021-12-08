@@ -33,6 +33,16 @@ function getBreweriesByStateDataFromServer(formInputStateParam) {
 
 }
 
+function getBreweriesByNameDataFromServer(formInputNameParam) {
+
+    return fetch(`https://api.openbrewerydb.org/breweries?per_page=1&page=5&by_name=${formInputNameParam}`)        
+        .then(function (response) 
+        {
+            return response.json()
+        })
+
+}
+
 //--------------------------END OF SERVER FUNCTIONS-------------------------------
 
 
@@ -181,6 +191,22 @@ function renderListSection(breweriesArrayParam) {
     //appending in header
     formEl.append(labelFormEl, inputEl)
     headerEl.append(formEl)
+
+    //event listener to this form
+    formEl.addEventListener('submit' ,function(event) {
+
+        event.preventDefault()
+
+        // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+        getBreweriesByNameDataFromServer(formEl['search-breweries'].value)
+            .then(function (breweriesArrayFromServer) {
+                state.breweries = breweriesArrayFromServer
+                formEl.reset()
+                render()
+            })
+
+
+    })
 
 
     //creating article inside the main
