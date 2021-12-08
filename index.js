@@ -16,7 +16,7 @@ const state = {
 
 function getBreweriesDataFromServer() {
 
-    return fetch(`https://api.openbrewerydb.org/breweries`)
+    return fetch(`https://api.openbrewerydb.org/breweries?per_page=10&page=5`)
         .then(function (response) 
     {
         return response.json()
@@ -26,7 +26,7 @@ function getBreweriesDataFromServer() {
 
 function getBreweriesByStateDataFromServer(formInputStateParam) {
 
-    return fetch(`https://api.openbrewerydb.org/breweries?per_page=10&page=2&by_state=${formInputStateParam}`)        .then(function (response) 
+    return fetch(`https://api.openbrewerydb.org/breweries?per_page=10&page=5&by_state=${formInputStateParam}`)        .then(function (response) 
     {
         return response.json()
     })
