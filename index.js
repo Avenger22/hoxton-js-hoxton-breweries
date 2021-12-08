@@ -16,7 +16,17 @@ const state = {
 
 function getBreweriesDataFromServer() {
 
-    return fetch('https://api.openbrewerydb.org/breweries').then(function (response) 
+    return fetch(`https://api.openbrewerydb.org/breweries`)
+        .then(function (response) 
+    {
+        return response.json()
+    })
+
+}
+
+function getBreweriesByStateDataFromServer(formInputStateParam) {
+
+    return fetch(`https://api.openbrewerydb.org/breweries?per_page=10&page=2&by_state=${formInputStateParam}`)        .then(function (response) 
     {
         return response.json()
     })
@@ -28,6 +38,23 @@ function getBreweriesDataFromServer() {
 
 //--------------------------HELPER FUNCTIONS-------------------------------------
 
+function listenToFormStateSubmit() {
+
+    formHeaderEl.addEventListener('submit' ,function(event) {
+
+        event.preventDefault()
+
+        //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+        getBreweriesByStateDataFromServer(formHeaderEl['select-state'].value)
+            .then(function (breweriesArrayFromServer) {
+                state.breweries = breweriesArrayFromServer
+                formHeaderEl.reset()
+                render()
+            })
+
+    })
+
+}
 
 //--------------------------END OF HELPER FUNCTIONS-------------------------------
 
@@ -242,14 +269,23 @@ function render() {
     renderMain(state.breweries)
 }
 
-//FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-getBreweriesDataFromServer().then(function (breweriesArrayFromServer) {
-    state.breweries = breweriesArrayFromServer
-    render()
- })
+function init() {
 
+    render()
+
+    //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+    getBreweriesDataFromServer()
+        .then(function (breweriesArrayFromServer) 
+        {
+            state.breweries = breweriesArrayFromServer
+            render()
+        })
+
+    listenToFormStateSubmit()
+
+}
 
 //--------------------------END OF RENDER FUNCTIONS-------------------------------
 
 
-render()
+init()
