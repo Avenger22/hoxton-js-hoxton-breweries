@@ -53,6 +53,16 @@ function getBreweriesByTypeDataFromServer(formInputTypeParam) {
 
 }
 
+function getBreweriesByCityDataFromServer(formInputCityParam) {
+
+    return fetch(`https://api.openbrewerydb.org/breweries?page=5&by_city=${formInputCityParam}`)        
+        .then(function (response) 
+        {
+            return response.json()
+        })
+
+}
+
 //--------------------------END OF SERVER FUNCTIONS-------------------------------
 
 
@@ -113,7 +123,7 @@ function renderFilterSection(breweriesArrayParam) {
     optionEl2.textContent = 'Micro'
 
     const optionEl3 = document.createElement('option')
-    optionEl3.setAttribute('value', 'reginal')
+    optionEl3.setAttribute('value', 'regional')
     optionEl3.textContent = 'Regional'
 
     const optionEl4 = document.createElement('option')
@@ -128,19 +138,20 @@ function renderFilterSection(breweriesArrayParam) {
     selectEl.addEventListener('change', function(event) {
 
         event.preventDefault()
+        // optionEl1.textContent = selectEl.options[selectEl.selectedIndex].text
 
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-        getBreweriesByTypeDataFromServer(selectEl.options[selectEl.selectedIndex].text)
-            .then(function (breweriesArrayFromServer) {
+        getBreweriesByTypeDataFromServer(selectEl.value) //give me errors cause i parsed the Brewpub text content
+            .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
                 state.breweries = breweriesArrayFromServer
                 formEl1.reset()
                 render()
             })
 
 
-    }, false);
+    });
 
-    
+    //CHECKBOX LIST
     const divEl = document.createElement('div')
     divEl.setAttribute('class', 'filter-by-city-heading')
 
@@ -155,9 +166,11 @@ function renderFilterSection(breweriesArrayParam) {
     divEl.append(h3DivEl, btnDivEl)
 
 
+    //checkbox form
     const formEl2 = document.createElement('form')
     formEl2.setAttribute('id', 'filter-by-city-form')
 
+    //destroy then recreate
     formEl2.innerHTML = ''
 
     for (const brewery of breweriesArrayParam) {
@@ -173,6 +186,25 @@ function renderFilterSection(breweriesArrayParam) {
 
         //appending elements to their parent form
         formEl2.append(inputEl, labelEl)
+
+        //event listener to the select option
+        inputEl.addEventListener('click', function(event) {
+
+            if (inputEl.checked === true) {
+
+                event.preventDefault()
+
+                // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+                getBreweriesByCityDataFromServer(brewery.city) //give me errors cause i parsed the Brewpub text content
+                    .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
+                        state.breweries = breweriesArrayFromServer
+                        formEl2.reset()
+                        render()
+                    })
+
+            }
+
+        });
 
     }
 
