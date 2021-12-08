@@ -14,6 +14,7 @@ const state = {
 
 //--------------------------SERVER FUNCTIONS-------------------------------------
 
+//deffault value at beginning just to have them loaded in beginning
 function getBreweriesDataFromServer() {
 
     return fetch(`https://api.openbrewerydb.org/breweries?per_page=10&page=5`)
@@ -58,6 +59,7 @@ function getBreweriesByCityDataFromServer(formInputCityParam) {
     return fetch(`https://api.openbrewerydb.org/breweries?page=5&by_city=${formInputCityParam}`)        
         .then(function (response) 
         {
+            // console.log(response.json())
             return response.json()
         })
 
@@ -173,6 +175,8 @@ function renderFilterSection(breweriesArrayParam) {
     //destroy then recreate
     formEl2.innerHTML = ''
 
+    // debugger
+
     for (const brewery of breweriesArrayParam) {
 
         const inputEl = document.createElement('input')
@@ -190,14 +194,16 @@ function renderFilterSection(breweriesArrayParam) {
         //event listener to the select option
         inputEl.addEventListener('click', function(event) {
 
-            if (inputEl.checked === true) {
+            if (inputEl.checked) {
 
                 event.preventDefault()
 
                 // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-                getBreweriesByCityDataFromServer(brewery.city) //give me errors cause i parsed the Brewpub text content
+                getBreweriesByCityDataFromServer(inputEl.textContent) //give me errors cause i parsed the Brewpub text content
                     .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
+                        console.log(breweriesArrayParam)
                         state.breweries = breweriesArrayFromServer
+                        console.log(state.breweries) //HERE THE PROBLEM DONT KNOW WHAT HAPPENS AFTER INPUT IS CHECKED BUG
                         formEl2.reset()
                         render()
                     })
