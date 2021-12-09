@@ -6,7 +6,7 @@ const apiUrlBase = `https://api.openbrewerydb.org/breweries`
 //-----------------------------------STATE OBJECT-----------------------------------------------------------------------------
 
 const state = {
-    breweries: [],
+    breweries: [], //this is stored on API others are for app use
     selectedState: null,
     selectedCity: null,
     selectedName: null,
@@ -14,11 +14,13 @@ const state = {
 
 }
 
-//-----------------------------------END OF STATE OBJECT------------------------------------------------------------------------
+//--------------------------------------END OF STATE OBJECT------------------------------------------------------------------------
 
 
-//---------------------------------SERVER FUNCTIONS------------------------------------------------------------------------------
+//---------------------------------------SERVER FUNCTIONS------------------------------------------------------------------------------
+//FETCHING DATA WHEN I NEED 4 DIFFERENT SCENARIOS
 
+//getBreweriesByStateDataFromServer :: (string) ==> promise(json)
 function getBreweriesByStateDataFromServer(formInputStateParam) {
 
     return fetch(`${apiUrlBase}?per_page=50&page=1&by_state=${formInputStateParam}`)        
@@ -29,6 +31,7 @@ function getBreweriesByStateDataFromServer(formInputStateParam) {
 
 }
 
+//getBreweriesByNameDataFromServer :: (string, string) ==> promise(json)
 function getBreweriesByNameDataFromServer(formInputNameParam, formInputStateParam) {
 
     return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_name=${formInputNameParam}`)        
@@ -39,6 +42,7 @@ function getBreweriesByNameDataFromServer(formInputNameParam, formInputStatePara
 
 }
 
+//getBreweriesByTypeDataFromServer :: (string, string) ==> promise(json)
 function getBreweriesByTypeDataFromServer(formInputTypeParam, formInputStateParam) {
 
     return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_type=${formInputTypeParam}`)        
@@ -49,6 +53,7 @@ function getBreweriesByTypeDataFromServer(formInputTypeParam, formInputStatePara
 
 }
 
+//getBreweriesByCityDataFromServer :: (string, string) ==> promise(json) this is not called replaced by the one below
 function getBreweriesByCityDataFromServer(formInputCityParam, formInputStateParam) {
 
     return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_city=${formInputCityParam}`)        
@@ -60,11 +65,24 @@ function getBreweriesByCityDataFromServer(formInputCityParam, formInputStatePara
 
 }
 
-//-----------------------------------------END OF SERVER FUNCTIONS--------------------------------------------------------------------
+//getBreweriesByCityAndTypeDataFromServer :: (string, string, string) ==> promise(json)
+function getBreweriesByCityAndTypeDataFromServer(formInputCityParam, formInputStateParam, formInputTypeParam) {
+
+    return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_city=${formInputCityParam}&by_type=${formInputTypeParam}`)        
+        .then(function (response) 
+        {
+            // console.log(response.json())
+            return response.json()
+        })
+
+}
+
+//-----------------------------------------------END OF SERVER FUNCTIONS--------------------------------------------------------------------
 
 
-//------------------------------------------HELPER FUNCTIONS---------------------------------------------------------------------------
+//------------------------------------------------HELPER FUNCTIONS---------------------------------------------------------------------------
 
+//returns nothing also no input, just does stuff when called, changes state, gets stuff from the function call and rerenders
 function listenToFormStateSubmit() {
 
     formHeaderEl.addEventListener('submit' ,function(event) {
@@ -76,13 +94,15 @@ function listenToFormStateSubmit() {
         }
 
         else {
+
             //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
             getBreweriesByStateDataFromServer(formHeaderEl['select-state'].value)
-            .then(function (breweriesArrayFromServer) {
+                .then(function (breweriesArrayFromServer) {
+
                 state.breweries = breweriesArrayFromServer
                 state.selectedState = formHeaderEl['select-state'].value
-                // formHeaderEl.reset()
                 render()
+
             })
 
         } //end of else
@@ -96,6 +116,7 @@ function listenToFormStateSubmit() {
 
 //------------------------------------------RENDER FUNCTIONS----------------------------------------------------------------------
 
+//this render filter, takes an array states.breweries and doesnt return
 function renderFilterSection(breweriesArrayParam) {
 
     const asideEl = document.createElement('aside')
@@ -147,15 +168,18 @@ function renderFilterSection(breweriesArrayParam) {
 
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
         getBreweriesByTypeDataFromServer(selectEl.value, state.selectedState) //give me errors cause i parsed the Brewpub text content
-            .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
+            .then(function (breweriesArrayFromServer) {
+
+                 //i did this selectEl.options[selectEl.selectedIndex].text
                 state.breweries = breweriesArrayFromServer
                 state.selectedType = selectEl.value
-                // formEl1.reset()
+
                 render()
+
             })
 
-
     });
+
 
     //CHECKBOX LIST
     const divEl = document.createElement('div')
@@ -179,8 +203,6 @@ function renderFilterSection(breweriesArrayParam) {
     //destroy then recreate
     formEl2.innerHTML = ''
 
-    // debugger
-
     for (const brewery of breweriesArrayParam) {
 
         const inputEl = document.createElement('input')
@@ -203,16 +225,16 @@ function renderFilterSection(breweriesArrayParam) {
                 event.preventDefault()
 
                 // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-                getBreweriesByCityDataFromServer(inputEl.value, state.selectedState) //give me errors cause i parsed the Brewpub text content
+                getBreweriesByCityAndTypeDataFromServer(inputEl.value, state.selectedState, state.selectedType) //give me errors cause i parsed the Brewpub text content
                     .then(function (breweriesArrayFromServer) {
 
                          //i did this selectEl.options[selectEl.selectedIndex].text
-                        console.log(breweriesArrayParam)
+                        console.log(breweriesArrayParam) //just for checking debugging things
 
-                        state.breweries = breweriesArrayFromServer
+                        state.breweries = breweriesArrayFromServer //we always change the state after events array gets data from FETCH from API
                         state.selectedCity = inputEl.textContent
                         console.log(state.breweries) //HERE THE PROBLEM DONT KNOW WHAT HAPPENS AFTER INPUT IS CHECKED BUG
-                        // formEl2.reset()
+                       
                         render()
 
                     })
@@ -229,6 +251,7 @@ function renderFilterSection(breweriesArrayParam) {
 
 }
 
+//this render list, takes an array states.breweries and doesnt return
 function renderListSection(breweriesArrayParam) {
 
     const h1El = document.createElement('h1')
@@ -257,7 +280,7 @@ function renderListSection(breweriesArrayParam) {
     formEl.append(labelFormEl, inputEl)
     headerEl.append(formEl)
 
-    //event listener to this form
+    //event listener to this form to check by NAME
     formEl.addEventListener('submit' ,function(event) {
 
         event.preventDefault()
@@ -265,10 +288,12 @@ function renderListSection(breweriesArrayParam) {
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
         getBreweriesByNameDataFromServer(formEl['search-breweries'].value, state.selectedState)
             .then(function (breweriesArrayFromServer) {
+
                 state.breweries = (breweriesArrayFromServer)
                 state.selectedName = formEl['search-breweries'].value
-                formEl.reset()
+    
                 render()
+
             })
 
 
@@ -341,6 +366,7 @@ function renderListSection(breweriesArrayParam) {
         //append all to the li
         liArticleEl.append(h2ArticleEl, divArticleEl, sectionArticleEl1, sectionArticleEl2, sectionArticleEl3)
         ulArticleEl.append(liArticleEl)
+
     }
 
     articleEl.append(ulArticleEl)
@@ -350,13 +376,13 @@ function renderListSection(breweriesArrayParam) {
 
 }
 
+//this renders main, this doesnt return anything, destroys and recreates the main, and calls 2 other render sections
 function renderMain(breweriesArrayParam) {
 
-     //we destroy everything then recreate each time it renders the page and state changes
-     mainContentEl.innerHTML = ''
+    //we destroy everything then recreate each time it renders the page and state changes
+    mainContentEl.innerHTML = ''
 
-     //recreate using the array to create individual render each post basech on each object inside the array
- 
+    //recreate using the array to create individual render each post basech on each object inside the array
     renderFilterSection(breweriesArrayParam)
     renderListSection(breweriesArrayParam)
      
