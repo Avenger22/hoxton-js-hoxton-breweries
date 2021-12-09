@@ -21,7 +21,7 @@ const state = {
 
 function getBreweriesByStateDataFromServer(formInputStateParam) {
 
-    return fetch(`${apiUrlBase}?per_page=30&page=1&by_state=${formInputStateParam}`)        
+    return fetch(`${apiUrlBase}?per_page=50&page=1&by_state=${formInputStateParam}`)        
         .then(function (response) 
         {
             return response.json()
@@ -31,7 +31,7 @@ function getBreweriesByStateDataFromServer(formInputStateParam) {
 
 function getBreweriesByNameDataFromServer(formInputNameParam, formInputStateParam) {
 
-    return fetch(`${apiUrlBase}?per_page=1&page=1&by_state=${formInputStateParam}&by_name=${formInputNameParam}`)        
+    return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_name=${formInputNameParam}`)        
         .then(function (response) 
         {
             return response.json()
