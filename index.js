@@ -87,7 +87,7 @@ function listenToFormStateSubmit() {
             .then(function (breweriesArrayFromServer) {
                 state.breweries = breweriesArrayFromServer
                 state.selectedState = formHeaderEl['select-state'].value
-                formHeaderEl.reset()
+                // formHeaderEl.reset()
                 render()
             })
 
@@ -154,7 +154,7 @@ function renderFilterSection(breweriesArrayParam) {
             .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
                 state.breweries = breweriesArrayFromServer
                 state.selectedType = selectEl.value
-                formEl1.reset()
+                // formEl1.reset()
                 render()
             })
 
@@ -200,21 +200,25 @@ function renderFilterSection(breweriesArrayParam) {
         formEl2.append(inputEl, labelEl)
 
         //event listener to the select option
-        inputEl.addEventListener('click', function(event) {
+        inputEl.addEventListener('change', function(event) {
 
             if (inputEl.checked) {
 
                 event.preventDefault()
 
                 // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-                getBreweriesByCityDataFromServer(inputEl.textContent, state.selectedState) //give me errors cause i parsed the Brewpub text content
-                    .then(function (breweriesArrayFromServer) { //i did this selectEl.options[selectEl.selectedIndex].text
+                getBreweriesByCityDataFromServer(inputEl.value, state.selectedState) //give me errors cause i parsed the Brewpub text content
+                    .then(function (breweriesArrayFromServer) {
+
+                         //i did this selectEl.options[selectEl.selectedIndex].text
                         console.log(breweriesArrayParam)
+
                         state.breweries = breweriesArrayFromServer
                         state.selectedCity = inputEl.textContent
                         console.log(state.breweries) //HERE THE PROBLEM DONT KNOW WHAT HAPPENS AFTER INPUT IS CHECKED BUG
-                        formEl2.reset()
+                        // formEl2.reset()
                         render()
+
                     })
 
             }
