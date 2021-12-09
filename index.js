@@ -19,20 +19,9 @@ const state = {
 
 //---------------------------------SERVER FUNCTIONS------------------------------------------------------------------------------
 
-//deffault value at beginning just to have them loaded in beginning
-// function getBreweriesDataFromServer() {
-
-//     return fetch(`${apiUrlBase}?per_page=20&page=1`)
-//         .then(function (response) 
-//     {
-//         return response.json()
-//     })
-
-// }
-
 function getBreweriesByStateDataFromServer(formInputStateParam) {
 
-    return fetch(`${apiUrlBase}?per_page=20&page=1&by_state=${formInputStateParam}`)        
+    return fetch(`${apiUrlBase}?per_page=30&page=1&by_state=${formInputStateParam}`)        
         .then(function (response) 
         {
             return response.json()
@@ -52,7 +41,7 @@ function getBreweriesByNameDataFromServer(formInputNameParam, formInputStatePara
 
 function getBreweriesByTypeDataFromServer(formInputTypeParam, formInputStateParam) {
 
-    return fetch(`${apiUrlBase}?page=1&per_page=20&by_state=${formInputStateParam}&by_type=${formInputTypeParam}`)        
+    return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_type=${formInputTypeParam}`)        
         .then(function (response) 
         {
             return response.json()
@@ -62,7 +51,7 @@ function getBreweriesByTypeDataFromServer(formInputTypeParam, formInputStatePara
 
 function getBreweriesByCityDataFromServer(formInputCityParam, formInputStateParam) {
 
-    return fetch(`${apiUrlBase}?page=1&per_page=20&by_state=${formInputStateParam}&by_city=${formInputCityParam}`)        
+    return fetch(`${apiUrlBase}?page=1&by_state=${formInputStateParam}&by_city=${formInputCityParam}`)        
         .then(function (response) 
         {
             // console.log(response.json())
@@ -379,18 +368,8 @@ function render() {
 
 function init() {
 
-    //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-    // getBreweriesDataFromServer()
-    //     .then(function (breweriesArrayFromServer) 
-    //     {
-    //         state.breweries = breweriesArrayFromServer
-    //         render()
-    //     })
-
     listenToFormStateSubmit()
     render()
-
-    // listenToFormStateSubmit()
 
 }
 
