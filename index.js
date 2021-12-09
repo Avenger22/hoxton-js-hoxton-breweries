@@ -3,7 +3,7 @@ const formHeaderEl = document.querySelector('form#select-state-form')
 const mainContentEl = document.querySelector('main.main-content')
 const apiUrlBase = `https://api.openbrewerydb.org/breweries`
 
-//-----------------------------------STATE OBJECT--------------------------------------
+//-----------------------------------STATE OBJECT-----------------------------------------------------------------------------
 
 const state = {
     breweries: [],
@@ -14,21 +14,21 @@ const state = {
 
 }
 
-//--------------------------------END OF STATE OBJECT--------------------------------
+//-----------------------------------END OF STATE OBJECT------------------------------------------------------------------------
 
 
-//--------------------------SERVER FUNCTIONS-------------------------------------
+//---------------------------------SERVER FUNCTIONS------------------------------------------------------------------------------
 
 //deffault value at beginning just to have them loaded in beginning
-function getBreweriesDataFromServer() {
+// function getBreweriesDataFromServer() {
 
-    return fetch(`${apiUrlBase}?per_page=20&page=1`)
-        .then(function (response) 
-    {
-        return response.json()
-    })
+//     return fetch(`${apiUrlBase}?per_page=20&page=1`)
+//         .then(function (response) 
+//     {
+//         return response.json()
+//     })
 
-}
+// }
 
 function getBreweriesByStateDataFromServer(formInputStateParam) {
 
@@ -71,10 +71,10 @@ function getBreweriesByCityDataFromServer(formInputCityParam, formInputStatePara
 
 }
 
-//--------------------------END OF SERVER FUNCTIONS-------------------------------
+//-----------------------------------------END OF SERVER FUNCTIONS--------------------------------------------------------------------
 
 
-//--------------------------HELPER FUNCTIONS-------------------------------------
+//------------------------------------------HELPER FUNCTIONS---------------------------------------------------------------------------
 
 function listenToFormStateSubmit() {
 
@@ -82,8 +82,13 @@ function listenToFormStateSubmit() {
 
         event.preventDefault()
 
-        //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-        getBreweriesByStateDataFromServer(formHeaderEl['select-state'].value)
+        if (formHeaderEl['select-state'].value === '') {
+            console.log('Empty space in form, exit program no render')
+        }
+
+        else {
+            //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
+            getBreweriesByStateDataFromServer(formHeaderEl['select-state'].value)
             .then(function (breweriesArrayFromServer) {
                 state.breweries = breweriesArrayFromServer
                 state.selectedState = formHeaderEl['select-state'].value
@@ -91,14 +96,16 @@ function listenToFormStateSubmit() {
                 render()
             })
 
-    })
+        } //end of else
 
+    }) //end of event listener
+ 
 }
 
-//--------------------------END OF HELPER FUNCTIONS-------------------------------
+//---------------------------------------END OF HELPER FUNCTIONS-----------------------------------------------------------------
 
 
-//--------------------------RENDER FUNCTIONS-------------------------------------
+//------------------------------------------RENDER FUNCTIONS----------------------------------------------------------------------
 
 function renderFilterSection(breweriesArrayParam) {
 
@@ -269,7 +276,7 @@ function renderListSection(breweriesArrayParam) {
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
         getBreweriesByNameDataFromServer(formEl['search-breweries'].value, state.selectedState)
             .then(function (breweriesArrayFromServer) {
-                state.breweries = breweriesArrayFromServer
+                state.breweries = (breweriesArrayFromServer)
                 state.selectedName = formEl['search-breweries'].value
                 formEl.reset()
                 render()
@@ -373,21 +380,22 @@ function render() {
 function init() {
 
     //FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
-    getBreweriesDataFromServer()
-        .then(function (breweriesArrayFromServer) 
-        {
-            state.breweries = breweriesArrayFromServer
-            render()
-        })
-
-    render()
+    // getBreweriesDataFromServer()
+    //     .then(function (breweriesArrayFromServer) 
+    //     {
+    //         state.breweries = breweriesArrayFromServer
+    //         render()
+    //     })
 
     listenToFormStateSubmit()
+    render()
+
+    // listenToFormStateSubmit()
 
 }
 
-//--------------------------END OF RENDER FUNCTIONS-------------------------------
+//-------------------------------------------END OF RENDER FUNCTIONS--------------------------------------------------------------------------
 
 
-//--------------------------------APP START------------------------------------------
+//---------------------------------------------------APP START---------------------------------------------------------------------------
 init()
