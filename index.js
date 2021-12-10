@@ -3,14 +3,14 @@ const formHeaderEl = document.querySelector('form#select-state-form')
 const mainContentEl = document.querySelector('main.main-content')
 const apiUrlBase = `https://api.openbrewerydb.org/breweries`
 
-//-----------------------------------STATE OBJECT-----------------------------------------------------------------------------
+//------------------------------------------STATE OBJECT-----------------------------------------------------------------------------
 
 const state = {
     breweries: [], //this is stored on API others are for app use
-    selectedState: null,
-    selectedCity: null,
-    selectedName: null,
-    selectedType: null
+    selectedState: '',
+    selectedCity: '',
+    selectedName: '',
+    selectedType: ''
 
 }
 
@@ -85,6 +85,8 @@ function getBreweriesByCityAndTypeDataFromServer(formInputCityParam, formInputSt
 //returns nothing also no input, just does stuff when called, changes state, gets stuff from the function call and rerenders
 function listenToFormStateSubmit() {
 
+    formHeaderEl['select-state'].value = state.selectedState
+
     formHeaderEl.addEventListener('submit' ,function(event) {
 
         event.preventDefault()
@@ -99,9 +101,9 @@ function listenToFormStateSubmit() {
             getBreweriesByStateDataFromServer(formHeaderEl['select-state'].value)
                 .then(function (breweriesArrayFromServer) {
 
-                state.breweries = breweriesArrayFromServer
-                state.selectedState = formHeaderEl['select-state'].value
-                render()
+                state.breweries = breweriesArrayFromServer //updates the state
+                state.selectedState = formHeaderEl['select-state'].value //updates the state
+                render() //rerender after changing state
 
             })
 
@@ -111,10 +113,10 @@ function listenToFormStateSubmit() {
  
 }
 
-//---------------------------------------END OF HELPER FUNCTIONS-----------------------------------------------------------------
+//--------------------------------------------END OF HELPER FUNCTIONS-----------------------------------------------------------------
 
 
-//------------------------------------------RENDER FUNCTIONS----------------------------------------------------------------------
+//------------------------------------------------RENDER FUNCTIONS----------------------------------------------------------------------
 
 //this render filter, takes an array states.breweries and doesnt return
 function renderFilterSection(breweriesArrayParam) {
@@ -160,10 +162,12 @@ function renderFilterSection(breweriesArrayParam) {
     selectEl.append(optionEl1, optionEl2, optionEl3, optionEl4)
     formEl1.append(labelEl1, selectEl)
 
-    //event listener to the select option
-    selectEl.addEventListener('change', function(event) {
+    selectEl.value = state.selectedType //linking this with the state
 
-        event.preventDefault()
+    //event listener to the select option
+    selectEl.addEventListener('change', function() {
+
+        // event.preventDefault()
         // optionEl1.textContent = selectEl.options[selectEl.selectedIndex].text
 
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
@@ -171,10 +175,10 @@ function renderFilterSection(breweriesArrayParam) {
             .then(function (breweriesArrayFromServer) {
 
                  //i did this selectEl.options[selectEl.selectedIndex].text
-                state.breweries = breweriesArrayFromServer
-                state.selectedType = selectEl.value
+                state.breweries = breweriesArrayFromServer //updates and changes state value
+                state.selectedType = selectEl.value //updates and changes state value
 
-                render()
+                render() //rerenders content in the page after updating state
 
             })
 
@@ -207,35 +211,38 @@ function renderFilterSection(breweriesArrayParam) {
 
         const inputEl = document.createElement('input')
         inputEl.setAttribute('type', 'checkbox')
-        inputEl.setAttribute('name', brewery.city)
-        inputEl.setAttribute('value', brewery.city)
+        inputEl.setAttribute('name', `${brewery.city}`) //it didnt work with just variable name
+        inputEl.setAttribute('value', `${brewery.city}`) //also this didnt
 
         const labelEl = document.createElement('label')
-        labelEl.setAttribute('for', brewery.city)
+        labelEl.setAttribute('for', `${brewery.city}`)
         labelEl.textContent = brewery.city
 
         //appending elements to their parent form
         formEl2.append(inputEl, labelEl)
 
+        // inputEl.value = state.selectedCity //linking state and dom
+
+
         //event listener to the select option
-        inputEl.addEventListener('change', function(event) {
+        inputEl.addEventListener('change', function() {
 
-            if (inputEl.checked) {
+            if (inputEl.checked) { //if (true) boolean
 
-                event.preventDefault()
+                // event.preventDefault()
 
                 // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
                 getBreweriesByCityAndTypeDataFromServer(inputEl.value, state.selectedState, state.selectedType) //give me errors cause i parsed the Brewpub text content
                     .then(function (breweriesArrayFromServer) {
 
                          //i did this selectEl.options[selectEl.selectedIndex].text
-                        console.log(breweriesArrayParam) //just for checking debugging things
+                        console.log(breweriesArrayFromServer) //just for checking debugging things
 
-                        state.breweries = breweriesArrayFromServer //we always change the state after events array gets data from FETCH from API
-                        state.selectedCity = inputEl.textContent
+                        state.breweries = breweriesArrayFromServer//we always change the state after events array gets data from FETCH from API
+                        state.selectedCity = inputEl.value //update the state value didnt work with .value
                         console.log(state.breweries) //HERE THE PROBLEM DONT KNOW WHAT HAPPENS AFTER INPUT IS CHECKED BUG
                        
-                        render()
+                        render() //rerenders the page after chaning state
 
                     })
 
@@ -280,20 +287,21 @@ function renderListSection(breweriesArrayParam) {
     formEl.append(labelFormEl, inputEl)
     headerEl.append(formEl)
 
+    formEl['search-breweries'].value = state.selectedName //linking state and DOM
+
     //event listener to this form to check by NAME
     formEl.addEventListener('submit' ,function(event) {
 
-        event.preventDefault()
+        event.preventDefault() //when you have submit form this should prevent reloading of the page
 
         // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
         getBreweriesByNameDataFromServer(formEl['search-breweries'].value, state.selectedState)
             .then(function (breweriesArrayFromServer) {
 
-                state.breweries = (breweriesArrayFromServer)
-                state.selectedName = formEl['search-breweries'].value
+                state.breweries = (breweriesArrayFromServer) //updates the state
+                state.selectedName = formEl['search-breweries'].value //updates the state
     
-                render()
-
+                render() //rerenders the page after changing state
             })
 
 
@@ -394,8 +402,9 @@ function render() {
 
 function init() {
 
-    listenToFormStateSubmit()
+    // listenToFormStateSubmit() same thing as below
     render()
+    listenToFormStateSubmit()
 
 }
 
