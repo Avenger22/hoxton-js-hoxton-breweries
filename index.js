@@ -221,15 +221,17 @@ function renderFilterSection(breweriesArrayParam) {
         //appending elements to their parent form
         formEl2.append(inputEl, labelEl)
 
-        // inputEl.value = state.selectedCity //linking state and dom
+        // if (inputEl.value === state.selectedCity) {
+
+        //     inputEl.checked //linking state and dom
+
+        // }
 
 
         //event listener to the select option
         inputEl.addEventListener('change', function() {
 
-            if (inputEl.checked) { //if (true) boolean
-
-                // event.preventDefault()
+            if (inputEl.checked) { 
 
                 // FETCHING AND STORING DATA FROM SERVER TO STATE both arrays from json server
                 getBreweriesByCityAndTypeDataFromServer(inputEl.value, state.selectedState, state.selectedType) //give me errors cause i parsed the Brewpub text content
